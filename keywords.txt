@@ -1,4 +1,4 @@
 readFingerID	KEYWORD2
-readFingerX KEYWORD2
+readFingerX	KEYWORD2
 readFingerY 	KEYWORD2
 dataread	KEYWORD2

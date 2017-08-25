@@ -6,7 +6,7 @@ Firmware for the specific panel was found here:- http://www.buydisplay.com/defau
 Use source code from wolfmanjm : https://github.com/wolfmanjm/GSL1680
 
 pin | function  | Arduino Uno
------------------------------
+----|-----------|------------
 1   | SCL       | A5
 2   | SDA       | A4
 3   | VDD (3v3) | 3v3

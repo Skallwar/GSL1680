@@ -1,9 +1,6 @@
-# GSL1680
-Arduino driver for GSL1680
+# GSL1680 Arduino driver
 
-Information gleaned from https://github.com/rastersoft/gsl1680.git and various other sources
-Firmware for the specific panel was found here:- http://www.buydisplay.com/default/5-inch-tft-lcd-module-800x480-display-w-controller-i2c-serial-spi
-Use source code from wolfmanjm : https://github.com/wolfmanjm/GSL1680
+**This project is not in active development since I don't have the hardware anymore, but if a bug is found, please consider opening an issue or a pull request**
 
 pin | function  | Arduino Uno
 ----|-----------|------------
@@ -14,4 +11,9 @@ pin | function  | Arduino Uno
 5   | Int       | 2
 6   | Gnd       | gnd
 
-NOTE : Firmware is really heavy so this library cannot be used in some Arduino boards
+Warning : Firmware is really heavy so this library cannot be used in some Arduino boards
+
+## Thanks
+Information gleaned from https://github.com/rastersoft/gsl1680 and various other sources
+Firmware for the specific panel was found here: http://www.buydisplay.com/default/5-inch-tft-lcd-module-800x480-display-w-controller-i2c-serial-spi
+Use part of wolfmanjm source code: https://github.com/wolfmanjm/GSL1680

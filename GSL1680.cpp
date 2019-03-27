@@ -26,6 +26,11 @@
 //CONST
 #define BUFSIZE 32
 
+#define DEBUG_ERROR_OUTPUT false  //(false == serial debug error output off, true == serial debug error output on)
+#define SERIAL_ERROR if(DEBUG_ERROR_OUTPUT)Serial
+#define DEBUG_INFORMATION_OUTPUT false  //(false == serial debug informational output off, true == serial debug informational output on)
+#define SERIAL_INFORMATION if(DEBUG_INFORMATION_OUTPUT)Serial
+
 struct Sts_event ts_event;
 
 GSL1680::GSL1680()
@@ -35,13 +40,13 @@ GSL1680::GSL1680()
 
 void GSL1680::begin(uint8_t WAKE, uint8_t INTRPT)
 {
-    Serial.println("GSL1680: Start boot up sequence");
+    SERIAL_INFORMATION.println("GSL1680: Start boot up sequence");
     pinMode(WAKE, OUTPUT);          //
     digitalWrite(WAKE, LOW);        //
     pinMode(INTRPT, INPUT_PULLUP);  // Startup sequence PIN part
     delay(100);
 
-    /* Serial.println("Toggle Wake"); */
+  SERIAL_INFORMATION.println("Toggle Wake");
 	digitalWrite(WAKE, HIGH);
 	delay(50);
 	digitalWrite(WAKE, LOW);
@@ -52,18 +57,18 @@ void GSL1680::begin(uint8_t WAKE, uint8_t INTRPT)
     Wire.begin();
 
     // CTP startup sequence
-	/* Serial.println("Clear reg"); */
+	SERIAL_INFORMATION.println("Clear reg");
 	clear_reg();
-	/* Serial.println("Reset chip"); */
+	SERIAL_INFORMATION.println("Reset chip");
 	reset();
-	/* Serial.println("GSL1680: Load FW"); */
+	SERIAL_INFORMATION.println("GSL1680: Load FW");
 	loadfw();
 	//startup_chip();
-	/* Serial.println("Reset chip 2"); */
+	SERIAL_INFORMATION.println("Reset chip 2");
 	reset();
-	/* Serial.println("Startup Chip"); */
+	SERIAL_INFORMATION.println("Startup Chip");
     startchip();
-	Serial.println("GSL1680: Boot up complete");
+	SERIAL_INFORMATION.println("GSL1680: Boot up complete");
 }
 
 void GSL1680::clear_reg()
@@ -83,7 +88,7 @@ void GSL1680::clear_reg()
 
     int r = Wire.endTransmission();
     if (r != 0){
-        Serial.print("i2c write error: "); Serial.print(r); Serial.print(" "); Serial.println(REG[i], HEX);
+        SERIAL_ERROR.print("i2c write error: "); SERIAL_ERROR.print(r); SERIAL_ERROR.print(" "); SERIAL_ERROR.println(REG[i], HEX);
     }
 
 }
@@ -105,7 +110,7 @@ void GSL1680::reset()
 
     int r = Wire.endTransmission();
     if (r != 0){
-        Serial.print("i2c write error: "); Serial.print(r); Serial.print(" "); Serial.println(REG[i], HEX);
+        SERIAL_ERROR.print("i2c write error: "); SERIAL_ERROR.print(r); SERIAL_ERROR.print(" "); SERIAL_ERROR.println(REG[i], HEX);
     }
 
     uint8_t DATA_2[4] = {0};
@@ -140,7 +145,7 @@ void GSL1680::startchip()
 
     int r = Wire.endTransmission();
     if (r != 0){
-        Serial.print("i2c write error: "); Serial.print(r); Serial.print(" "); Serial.println(0xE0, HEX);
+        SERIAL_ERROR.print("i2c write error: "); SERIAL_ERROR.print(r); SERIAL_ERROR.print(" "); SERIAL_ERROR.println(0xE0, HEX);
     }
 }
 
@@ -161,7 +166,7 @@ void GSL1680::datasend(uint8_t REG, uint8_t DATA[], uint16_t NB)
 
     int r = Wire.endTransmission();
     if (r != 0) {
-        Serial.print("i2c write error: "); Serial.print(r); Serial.print(" "); Serial.println(REG, HEX);
+        SERIAL_ERROR.print("i2c write error: "); SERIAL_ERROR.print(r); SERIAL_ERROR.print(" "); SERIAL_ERROR.println(REG, HEX);
     }
 }
 
@@ -175,12 +180,12 @@ uint8_t GSL1680::dataread()
 
     int n = Wire.endTransmission();
     if (n != 0) {
-        Serial.print("i2c write error: "); Serial.print(n); Serial.print(" "); Serial.println(DATA_REG, HEX);
+        SERIAL_ERROR.print("i2c write error: "); SERIAL_ERROR.print(n); SERIAL_ERROR.print(" "); SERIAL_ERROR.println(DATA_REG, HEX);
     }
 
     n = Wire.requestFrom(I2CADDR, 24);
     if (n != 24) {
-        Serial.print("i2c read error: did not get expected count "); Serial.print(n); Serial.print("/"); Serial.println("24");
+        SERIAL_ERROR.print("i2c read error: did not get expected count "); SERIAL_ERROR.print(n); SERIAL_ERROR.print("/"); SERIAL_ERROR.println("24");
     }
 
     for(int i = 0; i<n; i++) {

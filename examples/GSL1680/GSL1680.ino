@@ -19,8 +19,10 @@ pin | function  | Arduino Uno
 6   | Gnd       | gnd
 */
 
+// Use this defines to activate or deactivate serial feedback from the lib
+#define GLS1680_DEBUG_ERROR true
+#define GLS1680_DEBUG_INFO true
 #include <GSL1680.h>
-#include <Wire.h>
 
 // Pins
 #define WAKE 4
@@ -35,7 +37,6 @@ void setup () {
 }
 
 void loop () {
-
   if(digitalRead(INTRPT) == HIGH) {
     Serial.println("Touch");
     int NBFinger = TS.dataread();

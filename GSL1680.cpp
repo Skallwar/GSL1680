@@ -26,17 +26,19 @@
 //CONST
 #define BUFSIZE 32
 
-#define DEBUG_ERROR_OUTPUT false  //(false == serial debug error output off, true == serial debug error output on)
-#define SERIAL_ERROR if(DEBUG_ERROR_OUTPUT)Serial
-#define DEBUG_INFORMATION_OUTPUT false  //(false == serial debug informational output off, true == serial debug informational output on)
-#define SERIAL_INFORMATION if(DEBUG_INFORMATION_OUTPUT)Serial
+#ifndef GLS1680_DEBUG_ERROR
+#define GSL1680_DEBUG_ERROR false  //(false == serial debug error output off, true == serial debug error output on)
+#endif
+#ifndef GLS1680_DEBUG_INFO
+#define GSL1680_DEBUG_INFO false  //(false == serial debug informational output off, true == serial debug informational output on)
+#endif
+
+#define SERIAL_ERROR if(GSL1680_DEBUG_ERROR)Serial
+#define SERIAL_INFORMATION if(GSL1680_DEBUG_INFO)Serial
 
 struct Sts_event ts_event;
 
-GSL1680::GSL1680()
-{
-
-}
+GSL1680::GSL1680() { }
 
 void GSL1680::begin(uint8_t WAKE, uint8_t INTRPT)
 {

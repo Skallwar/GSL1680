@@ -2,10 +2,6 @@
 /*!
     @file     GSL1680.h
     @author   ESTBLC
-    @section  HISTORY
-
-    v1.1.0 - Refactor and privatise some functions. Use new Wire standard
-    v1.0 - First release
 
     @thanks to wolfmanjm for the source code this lib is bassed on : https://github.com/wolfmanjm/GSL1680
 */

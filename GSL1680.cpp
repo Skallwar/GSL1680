@@ -36,7 +36,7 @@
 #define SERIAL_ERROR if(GSL1680_DEBUG_ERROR)Serial
 #define SERIAL_INFORMATION if(GSL1680_DEBUG_INFO)Serial
 
-struct Sts_event ts_event;
+struct Touch_event ts_event;
 
 GSL1680::GSL1680() { }
 
@@ -196,9 +196,9 @@ uint8_t GSL1680::dataread()
 
     ts_event.NBfingers = TOUCHRECDATA[0];
     for(int i = 0; i<ts_event.NBfingers; i++) {
-        ts_event.coords[i].X = ( (((uint32_t)TOUCHRECDATA[(i*4)+5])<<8) | (uint32_t)TOUCHRECDATA[(i*4)+4] ) & 0x00000FFF; // 12 bits of X coord
-        ts_event.coords[i].Y = ( (((uint32_t)TOUCHRECDATA[(i*4)+7])<<8) | (uint32_t)TOUCHRECDATA[(i*4)+6] ) & 0x00000FFF;
-        ts_event.coords[i].fingerID = (uint32_t)TOUCHRECDATA[(i*4)+7] >> 4; // finger that did the touch
+        ts_event.fingers[i].x = ( (((uint32_t)TOUCHRECDATA[(i*4)+5])<<8) | (uint32_t)TOUCHRECDATA[(i*4)+4] ) & 0x00000FFF; // 12 bits of X coord
+        ts_event.fingers[i].y = ( (((uint32_t)TOUCHRECDATA[(i*4)+7])<<8) | (uint32_t)TOUCHRECDATA[(i*4)+6] ) & 0x00000FFF;
+        ts_event.fingers[i].fingerID = (uint32_t)TOUCHRECDATA[(i*4)+7] >> 4; // finger that did the touch
     }
 
     return ts_event.NBfingers;
@@ -206,15 +206,15 @@ uint8_t GSL1680::dataread()
 
 uint8_t GSL1680::readFingerID(int NB)
 {
-    return ts_event.coords[NB].fingerID;
+    return ts_event.fingers[NB].fingerID;
 }
 
 uint32_t GSL1680::readFingerX(int NB)
 {
-    return ts_event.coords[NB].X;
+    return ts_event.fingers[NB].x;
 }
 
 uint32_t GSL1680::readFingerY(int NB)
 {
-    return ts_event.coords[NB].Y;
+    return ts_event.fingers[NB].y;
 }

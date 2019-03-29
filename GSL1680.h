@@ -33,14 +33,15 @@ class GSL1680 {
         void      datasend(uint8_t REG, uint8_t DATA[], uint16_t NB);
 };
 
-struct Scoords {
+struct Finger {
     uint8_t fingerID;
-    uint32_t X,Y;
+    uint32_t x;
+    uint32_t y;
 };
 
-struct Sts_event {
+struct Touch_event {
     uint8_t NBfingers;
-    struct Scoords coords[5];
+    struct Finger fingers[5];
 };
 
 #endif

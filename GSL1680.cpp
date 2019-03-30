@@ -23,19 +23,20 @@
 //CONST
 #define BUFSIZE 32
 
-#ifndef GLS1680_DEBUG_ERROR
-#define GSL1680_DEBUG_ERROR false  //(false == serial debug error output off, true == serial debug error output on)
-#endif
-#ifndef GLS1680_DEBUG_INFO
-#define GSL1680_DEBUG_INFO false  //(false == serial debug informational output off, true == serial debug informational output on)
-#endif
-
 #define SERIAL_ERROR if(GSL1680_DEBUG_ERROR)Serial
 #define SERIAL_INFORMATION if(GSL1680_DEBUG_INFO)Serial
 
 struct Touch_event ts_event;
 
-GSL1680::GSL1680() { }
+GSL1680::GSL1680() {
+    GSL1680_DEBUG_ERROR = false;
+    GSL1680_DEBUG_INFO = false;
+}
+
+GSL1680::GSL1680(bool error, bool info) {
+    GSL1680_DEBUG_ERROR = error;
+    GSL1680_DEBUG_INFO = info;
+}
 
 void GSL1680::begin(uint8_t WAKE, uint8_t INTRPT)
 {

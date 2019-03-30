@@ -14,6 +14,7 @@
 class GSL1680 {
     public:
         GSL1680 ();
+        GSL1680(bool error, bool info);
         void      begin(uint8_t WAKE, uint8_t INTRPT);
         uint8_t   dataread();
         uint8_t   readFingerID(int NB);
@@ -21,6 +22,8 @@ class GSL1680 {
         uint32_t  readFingerY(int NB);
 
     private:
+        bool      GSL1680_DEBUG_ERROR;
+        bool      GSL1680_DEBUG_INFO;
         void      clear_reg();
         void      reset();
         void      loadfw();

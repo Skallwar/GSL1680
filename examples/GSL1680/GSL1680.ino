@@ -19,16 +19,13 @@ pin | function  | Arduino Uno
 6   | Gnd       | gnd
 */
 
-// Use this defines to activate or deactivate serial feedback from the lib
-#define GLS1680_DEBUG_ERROR true
-#define GLS1680_DEBUG_INFO true
-#include <GSL1680.h>
 
 // Pins
 #define WAKE 4
 #define INTRPT 2
 
 GSL1680 TS = GSL1680();
+// An other constructor is available to enable some debug on serial : GSL1680(bool error, bool info);
 
 void setup () {
   Serial.begin(9600);

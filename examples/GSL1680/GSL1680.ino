@@ -19,6 +19,7 @@ pin | function  | Arduino Uno
 6   | Gnd       | gnd
 */
 
+#include "GSL1680.h"
 
 // Pins
 #define WAKE 4

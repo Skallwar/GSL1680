@@ -1,7 +1,7 @@
 /**************************************************************************/
 /*!
     @file     GSL1680.h
-    @author   ESTBLC
+    @author   Skallwar
 
     @thanks to wolfmanjm for the source code this lib is bassed on : https://github.com/wolfmanjm/GSL1680
 */

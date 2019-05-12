@@ -9,7 +9,7 @@ pin | function  | Arduino Uno
 3   | VDD (3v3) | 3v3
 4   | Wake      | 4
 5   | Int       | 2
-6   | Gnd       | gnd
+6   | Gnd       | GND
 
 Warning : Firmware is really heavy so this library cannot be used in some Arduino boards
 

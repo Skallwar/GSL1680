@@ -171,14 +171,16 @@ uint8_t GSL1680::dataread()
     Wire.write(DATA_REG);
 
     int n = Wire.endTransmission();
-    
-    if(n == 5) {
-        SERIAL_ERROR.println("i2c write error: timeout");
-    } else {
-        SERIAL_ERROR.print("i2c write error: ");
-        SERIAL_ERROR.print(n);
-        SERIAL_ERROR.print(" ");
-        SERIAL_ERROR.println(DATA_REG, HEX);
+
+    if (n != 0) {
+        if(n == 5) {
+            SERIAL_ERROR.println("i2c write error: timeout");
+        } else {
+            SERIAL_ERROR.print("i2c write error: ");
+            SERIAL_ERROR.print(n);
+            SERIAL_ERROR.print(" ");
+            SERIAL_ERROR.println(DATA_REG, HEX);
+        }
     }
 
     n = Wire.requestFrom(I2CADDR, 24);

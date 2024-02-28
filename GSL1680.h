@@ -17,6 +17,7 @@ class GSL1680 {
         GSL1680(bool error, bool info);
 
         void begin(uint8_t WAKE=-1 /* If you don't use this pin, leave WAKE=-1 */, uint8_t INTRPT);
+        void begin(uint8_t INTRPT); /* If you don't use the pin WAKE */
         uint8_t dataread();
         uint8_t readFingerID(int NB);
         uint32_t readFingerX(int NB);

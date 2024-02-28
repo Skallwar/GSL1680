@@ -38,22 +38,30 @@ GSL1680::GSL1680(bool error, bool info) {
     GSL1680_DEBUG_INFO = info;
 }
 
-void GSL1680::begin(uint8_t WAKE, uint8_t INTRPT)
+void GSL1680::begin(int16_t WAKE, uint8_t INTRPT)
 {
     SERIAL_INFORMATION.println("GSL1680: Start boot up sequence");
-    pinMode(WAKE, OUTPUT);          //
-    digitalWrite(WAKE, LOW);        //
+
+    if(WAKE >= 0) {
+        pinMode(WAKE, OUTPUT);          //
+        digitalWrite(WAKE, LOW);        //
+    } else {
+        SERIAL_INFORMATION.println("WAKE pin is not being used, need to leave it disconnected");
+    }
+
     pinMode(INTRPT, INPUT_PULLUP);  // Startup sequence PIN part
     delay(100);
 
-  SERIAL_INFORMATION.println("Toggle Wake");
+    if(WAKE >= 0) {
+        SERIAL_INFORMATION.println("Toggle Wake");
 	digitalWrite(WAKE, HIGH);
 	delay(50);
 	digitalWrite(WAKE, LOW);
 	delay(50);
 	digitalWrite(WAKE, HIGH);
 	delay(30);
-
+    }
+	
     Wire.begin();
 
     // CTP startup sequence

@@ -38,6 +38,11 @@ GSL1680::GSL1680(bool error, bool info) {
     GSL1680_DEBUG_INFO = info;
 }
 
+void GSL1680::begin(uint8_t INTRPT)
+{
+    begin(-1, INTRPT);
+}
+
 void GSL1680::begin(int16_t WAKE, uint8_t INTRPT)
 {
     SERIAL_INFORMATION.println("GSL1680: Start boot up sequence");

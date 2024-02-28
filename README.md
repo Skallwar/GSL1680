@@ -13,6 +13,8 @@ pin | function  | Arduino Uno
 
 Warning : Firmware is really heavy so this library cannot be used in some Arduino boards
 
+[Tested with ESP32 DEV KIT V1]
+
 ## Thanks
 Information gleaned from https://github.com/rastersoft/gsl1680 and various other sources
 Firmware for the specific panel was found here: http://www.buydisplay.com/default/5-inch-tft-lcd-module-800x480-display-w-controller-i2c-serial-spi

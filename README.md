@@ -14,6 +14,7 @@ pin | function  | Arduino Uno
 Warning : Firmware is really heavy so this library cannot be used in some Arduino boards
 
 [Tested with ESP32 DEV KIT V1]
+- Note: Wake pin is optional
 
 ## Thanks
 Information gleaned from https://github.com/rastersoft/gsl1680 and various other sources

@@ -15,6 +15,7 @@ Warning : Firmware is really heavy so this library cannot be used in some Arduin
 
 [Tested with ESP32 DEV KIT V1]
 - Note: Wake pin is optional
+- INT pin is recommended, or multiple readings must be made to be sure of the data.
 
 ## Thanks
 Information gleaned from https://github.com/rastersoft/gsl1680 and various other sources

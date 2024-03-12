@@ -38,22 +38,35 @@ GSL1680::GSL1680(bool error, bool info) {
     GSL1680_DEBUG_INFO = info;
 }
 
-void GSL1680::begin(uint8_t WAKE, uint8_t INTRPT)
+void GSL1680::begin(uint8_t INTRPT)
+{
+    begin(-1, INTRPT);
+}
+
+void GSL1680::begin(int16_t WAKE, uint8_t INTRPT)
 {
     SERIAL_INFORMATION.println("GSL1680: Start boot up sequence");
-    pinMode(WAKE, OUTPUT);          //
-    digitalWrite(WAKE, LOW);        //
+
+    if(WAKE >= 0) {
+        pinMode(WAKE, OUTPUT);          //
+        digitalWrite(WAKE, LOW);        //
+    } else {
+        SERIAL_INFORMATION.println("WAKE pin is not being used, need to leave it disconnected");
+    }
+
     pinMode(INTRPT, INPUT_PULLUP);  // Startup sequence PIN part
     delay(100);
 
-  SERIAL_INFORMATION.println("Toggle Wake");
+    if(WAKE >= 0) {
+        SERIAL_INFORMATION.println("Toggle Wake");
 	digitalWrite(WAKE, HIGH);
 	delay(50);
 	digitalWrite(WAKE, LOW);
 	delay(50);
 	digitalWrite(WAKE, HIGH);
 	delay(30);
-
+    }
+	
     Wire.begin();
 
     // CTP startup sequence
@@ -77,20 +90,14 @@ void GSL1680::clear_reg()
     uint8_t DATA[4] = {0x88, 0x01, 0x04, 0x00};
     uint8_t TIMER[4] = {20, 5, 5, 20};
 
-    Wire.beginTransmission(I2CADDR);
+    uint8_t _data[1];
 
     int i;
     for (i = 0; i < 4; ++i) {
-        Wire.write(REG[i]);
-        Wire.write(DATA[i]);
-        delay(TIMER[i]);
+        _data[0] = DATA[i];
+        
+        datasend(REG[i], _data, 1);
     }
-
-    int r = Wire.endTransmission();
-    if (r != 0){
-        SERIAL_ERROR.print("i2c write error: "); SERIAL_ERROR.print(r); SERIAL_ERROR.print(" "); SERIAL_ERROR.println(REG[i], HEX);
-    }
-
 }
 
 void GSL1680::reset()
@@ -99,24 +106,19 @@ void GSL1680::reset()
     uint8_t DATA[2] = {0x88, 0x04};
     uint8_t TIMER[2] = {20, 10};
 
-    Wire.beginTransmission(I2CADDR);
+    uint8_t _data[1];
 
     int i;
     for (i = 0; i < 2; ++i) {
-        Wire.write(REG[i]);
-        Wire.write(DATA[i]);
-        delay(TIMER[i]);
-    }
-
-    int r = Wire.endTransmission();
-    if (r != 0){
-        SERIAL_ERROR.print("i2c write error: "); SERIAL_ERROR.print(r); SERIAL_ERROR.print(" "); SERIAL_ERROR.println(REG[i], HEX);
+        _data[0] = DATA[i];
+    
+        datasend(REG[i], _data, 1);
     }
 
     uint8_t DATA_2[4] = {0};
 
     datasend (0xBC, DATA_2, 4);
-    delay(10);
+    delayMicroseconds(1500); // software reset takes ~1 ms
 }
 
 void GSL1680::loadfw()
@@ -138,15 +140,9 @@ void GSL1680::loadfw()
 
 void GSL1680::startchip()
 {
-    Wire.beginTransmission(I2CADDR);
-
-    Wire.write(0xE0);   //Registre
-    Wire.write(0x00);   //DATA
-
-    int r = Wire.endTransmission();
-    if (r != 0){
-        SERIAL_ERROR.print("i2c write error: "); SERIAL_ERROR.print(r); SERIAL_ERROR.print(" "); SERIAL_ERROR.println(0xE0, HEX);
-    }
+    uint8_t _data[1] = {0};
+        
+    datasend(0xE0, _data, 1);
 }
 
 void GSL1680::sleep()
@@ -165,8 +161,17 @@ void GSL1680::datasend(uint8_t REG, uint8_t DATA[], uint16_t NB)
     }
 
     int r = Wire.endTransmission();
-    if (r != 0) {
-        SERIAL_ERROR.print("i2c write error: "); SERIAL_ERROR.print(r); SERIAL_ERROR.print(" "); SERIAL_ERROR.println(REG, HEX);
+    if (r != 0){
+        if(r == 5) {
+            SERIAL_ERROR.println("i2c write error: timeout");
+        } else {
+            SERIAL_ERROR.print("i2c write error: ");
+            SERIAL_ERROR.print(r);
+            SERIAL_ERROR.print(" ");
+            SERIAL_ERROR.println(REG, HEX);
+        }
+        
+        SERIAL_ERROR.println();
     }
 }
 
@@ -179,8 +184,16 @@ uint8_t GSL1680::dataread()
     Wire.write(DATA_REG);
 
     int n = Wire.endTransmission();
+
     if (n != 0) {
-        SERIAL_ERROR.print("i2c write error: "); SERIAL_ERROR.print(n); SERIAL_ERROR.print(" "); SERIAL_ERROR.println(DATA_REG, HEX);
+        if(n == 5) {
+            SERIAL_ERROR.println("i2c write error: timeout");
+        } else {
+            SERIAL_ERROR.print("i2c write error: ");
+            SERIAL_ERROR.print(n);
+            SERIAL_ERROR.print(" ");
+            SERIAL_ERROR.println(DATA_REG, HEX);
+        }
     }
 
     n = Wire.requestFrom(I2CADDR, 24);

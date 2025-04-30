@@ -15,6 +15,10 @@
 #include "gslX680firmware.h"
 
 // Registres
+#ifndef WIRE_CHANNEL
+  #define WIRE_CHANNEL Wire
+#endif
+
 #define I2CADDR 0x40
 #define DATA_REG 0x80
 #define STATUS_REG 0xE0
@@ -54,7 +58,7 @@ void GSL1680::begin(uint8_t WAKE, uint8_t INTRPT)
 	digitalWrite(WAKE, HIGH);
 	delay(30);
 
-    Wire.begin();
+    WIRE_CHANNEL.begin();
 
     // CTP startup sequence
 	SERIAL_INFORMATION.println("Clear reg");
@@ -77,16 +81,16 @@ void GSL1680::clear_reg()
     uint8_t DATA[4] = {0x88, 0x01, 0x04, 0x00};
     uint8_t TIMER[4] = {20, 5, 5, 20};
 
-    Wire.beginTransmission(I2CADDR);
+    WIRE_CHANNEL.beginTransmission(I2CADDR);
 
     int i;
     for (i = 0; i < 4; ++i) {
-        Wire.write(REG[i]);
-        Wire.write(DATA[i]);
+        WIRE_CHANNEL.write(REG[i]);
+        WIRE_CHANNEL.write(DATA[i]);
         delay(TIMER[i]);
     }
 
-    int r = Wire.endTransmission();
+    int r = WIRE_CHANNEL.endTransmission();
     if (r != 0){
         SERIAL_ERROR.print("i2c write error: "); SERIAL_ERROR.print(r); SERIAL_ERROR.print(" "); SERIAL_ERROR.println(REG[i], HEX);
     }
@@ -99,16 +103,16 @@ void GSL1680::reset()
     uint8_t DATA[2] = {0x88, 0x04};
     uint8_t TIMER[2] = {20, 10};
 
-    Wire.beginTransmission(I2CADDR);
+    WIRE_CHANNEL.beginTransmission(I2CADDR);
 
     int i;
     for (i = 0; i < 2; ++i) {
-        Wire.write(REG[i]);
-        Wire.write(DATA[i]);
+        WIRE_CHANNEL.write(REG[i]);
+        WIRE_CHANNEL.write(DATA[i]);
         delay(TIMER[i]);
     }
 
-    int r = Wire.endTransmission();
+    int r = WIRE_CHANNEL.endTransmission();
     if (r != 0){
         SERIAL_ERROR.print("i2c write error: "); SERIAL_ERROR.print(r); SERIAL_ERROR.print(" "); SERIAL_ERROR.println(REG[i], HEX);
     }
@@ -138,12 +142,12 @@ void GSL1680::loadfw()
 
 void GSL1680::startchip()
 {
-    Wire.beginTransmission(I2CADDR);
+    WIRE_CHANNEL.beginTransmission(I2CADDR);
 
-    Wire.write(0xE0);   //Registre
-    Wire.write(0x00);   //DATA
+    WIRE_CHANNEL.write(0xE0);   //Registre
+    WIRE_CHANNEL.write(0x00);   //DATA
 
-    int r = Wire.endTransmission();
+    int r = WIRE_CHANNEL.endTransmission();
     if (r != 0){
         SERIAL_ERROR.print("i2c write error: "); SERIAL_ERROR.print(r); SERIAL_ERROR.print(" "); SERIAL_ERROR.println(0xE0, HEX);
     }
@@ -156,15 +160,15 @@ void GSL1680::sleep()
 
 void GSL1680::datasend(uint8_t REG, uint8_t DATA[], uint16_t NB)
 {
-    Wire.beginTransmission(I2CADDR);
+    WIRE_CHANNEL.beginTransmission(I2CADDR);
 
-    Wire.write(REG);
+    WIRE_CHANNEL.write(REG);
 
     for (uint16_t i = 0; i < NB; i++) {
-        Wire.write(DATA[i]);
+        WIRE_CHANNEL.write(DATA[i]);
     }
 
-    int r = Wire.endTransmission();
+    int r = WIRE_CHANNEL.endTransmission();
     if (r != 0) {
         SERIAL_ERROR.print("i2c write error: "); SERIAL_ERROR.print(r); SERIAL_ERROR.print(" "); SERIAL_ERROR.println(REG, HEX);
     }
@@ -174,22 +178,22 @@ uint8_t GSL1680::dataread()
 {
     uint8_t TOUCHRECDATA[24] = {0};
 
-    Wire.beginTransmission(I2CADDR);
+    WIRE_CHANNEL.beginTransmission(I2CADDR);
 
-    Wire.write(DATA_REG);
+    WIRE_CHANNEL.write(DATA_REG);
 
-    int n = Wire.endTransmission();
+    int n = WIRE_CHANNEL.endTransmission();
     if (n != 0) {
         SERIAL_ERROR.print("i2c write error: "); SERIAL_ERROR.print(n); SERIAL_ERROR.print(" "); SERIAL_ERROR.println(DATA_REG, HEX);
     }
 
-    n = Wire.requestFrom(I2CADDR, 24);
+    n = WIRE_CHANNEL.requestFrom(I2CADDR, 24);
     if (n != 24) {
         SERIAL_ERROR.print("i2c read error: did not get expected count "); SERIAL_ERROR.print(n); SERIAL_ERROR.print("/"); SERIAL_ERROR.println("24");
     }
 
     for(int i = 0; i<n; i++) {
-        TOUCHRECDATA[i] = Wire.read();
+        TOUCHRECDATA[i] = WIRE_CHANNEL.read();
     }
 
     ts_event.NBfingers = TOUCHRECDATA[0];
